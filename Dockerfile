@@ -1,0 +1,7 @@
+FROM postgres
+ENV POSTGRES_USER=marcelo
+ENV POSTGRES_PASSWORD=marcelo
+ENV POSTGRES_DB=estudo
+
+
+
