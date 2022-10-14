@@ -92,3 +92,127 @@ ele tente executar para o host local, porta defaul(5432) e usuário postgres, j�
 ```shell
 psql -h 127.0.0.1 -p 5432 -U postgres 
 ```
+
+## Database, Schemas e Objetos
+
+Database
+`CREATE DATABASE name`
+
+ALTER DATABASE name RENAME TO new_name
+ALTER DATABASE name OWNER TO {new_owner | CURRENT_USER | SESSION_USER}
+ALTER DATABASE SET TABLESPACE new_tablespace
+
+DROP DATABASE name
+
+Schema
+Por padrão quando é criado um novo banco de dados, já é criado um schema public, mas caso queira criar um novo schema.
+CREATE SCHEMA schema_name [AUTHORIZATION role_specification ]
+
+ALTER SCHEMA name RENAME TO new_schema_name
+
+Melhores práticas
+CREATE SCHEMA IF NOT EXISTS schema_name [ AUTHORIZATION role_specification ]
+DROP SCHEMA IF EXISTS [name];
+
+### DML (Data Manipulation Language)
+INSERT, UPDATE, DELETE, *SELECT
+
+### DDL (Data Definition Language)
+CREATE, ALTER, DROP
+
+CREATE [object] [object name] [options]
+ALTER [object] [object name] [options]
+DROP [object] [object name] [options]
+
+CREATE DATABASE dadosbancarios;
+ALTER DATABASE dadosbancarios OWNER TO diretoria;
+DROP DATABASE dadosbancarios;
+
+CREATE SCHEMA IF NOT EXISTS bancos;
+ALTER SCHEMA bancos OWNER TO diretoria;
+DROP SCHEMA IF EXISTS bancos;
+
+CREATE TABLE [IF NOT EXISTS ] [table name](
+    [field name] [type] [role] [options],
+    [field name] [type] [role] [options]
+);
+
+ALTER TABLE [table name] [options];
+
+DROP TABLE [table name];
+
+CREATE TABLE IF NOT EXISTS banco(
+    codigo INTEGER PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    data_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
+);
+
+CREATE TABLE IF NOT EXISTS banco(
+    codigo INTEGER,
+    nome VARCHAR(50) NOT NULL,
+    data_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY(codigo)
+);
+
+ALTER TABLE banco ADD COLUMN tem_poupanca BOOLEAN;
+
+DROP TABLE IF EXISTS banco;
+
+
+#### INSERT
+INSERT INTO [table name] ([fields table,])
+VALUES ([values to fields in order fields table,]);
+
+INSERT INTO [nome da table] ([campos da tabela,])
+SELECT [valores de acordo com a ordem dos campos acima,];
+
+INSERT INTO banco (codigo, nome, data_criacao)
+VALUES(100, 'Banco do Brasil', now());
+
+INSERT INTO banco (codigo, nome, data_criacao)
+SELECT 100, 'Banco do Brasil', now();
+
+#### UPDATE
+UPDATE [table name] SET
+[field1] = [new field1 value],
+[field2] = [new field2 value]
+...
+[WHERE + conditions]
+
+Atenção: Sempre utilize-os com condição
+
+UPDATE banco SET
+codigo = 500
+WHERE codigo = 100;
+
+UPDATE banco SET
+data_criacao = now()
+WHERE data_criacao IS NULL;
+
+#### DELETE
+DELETE FROM [table name]
+[WHERE + conditions]
+
+Atenção: Sempre utilize-os com condição.
+
+DELETE FROM banco
+WHERE codigo = 512;
+
+DELETE FROM banco
+WHERE nome = 'Conta Digital';
+
+#### SELECT
+SELECT [fields table]
+FROM [table name]
+[WHERE + conditions]
+
+Boas práticas: Evite sempre que puder o SELECT *..
+
+SELECT codigo, nome
+FROM banco;
+
+SELECT codigo, nome
+FROM banco
+WHERE data_criacao > '2022-10-12 10:00:00';
+
+
