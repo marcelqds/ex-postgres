@@ -215,4 +215,87 @@ SELECT codigo, nome
 FROM banco
 WHERE data_criacao > '2022-10-12 10:00:00';
 
+#### Revisão
+PK
+FK
+Tipos de dados
+DDL
+DML
+
+### Idempotência
+Propriedade que algumas ações/operações possuem possibilitando-as de serem executadas diversas vezes sem alterar o resultado após aplicação inicial.
+- IF EXISTS / IF NOT EXISTS (possibilita executar um comando mais de uma vez sem que ocorra erro ao executá-lo)
+No caso de criação de banco de dados, tabela, é uma boa prática utilizar da idempotência.
+Comandos pertinentes ao DDL e DML
+
+#### Melhores práticas em DDL
+Criar campos que realmente serão utilizados e que sirvam de atributo direto a um objetivo em comum.
+- Cuidado com tamanho indevio de colunas: Ex: CEP VARCHAR(255)
+- Criar/Acrescentar colunas que são "atributos básicos" do objeto;
+- Cuidado com regras (constraints);
+- Cuidado com excesso de foreign key
+
+### Select
+WHERE ativo IS TRUE; // IS compara um booleano
+WHERE email LIKE '%gmail.com'; // LIKE compara string case sensitive;
+WHERE nome ILIKE '%Bradesco'; // ILIKE compara strings ignorando o case sensitive;
+
+### Condições
+WHERE / AND / OR
+- = 
+- > / >=
+- < / <=
+- <> / !=
+- LIKE
+- ILIKE
+- IN
+- IS
+
+#### SELECT - Idempotência
+SELECT (campos,)
+FROM tabela1
+WHERE EXISTS (
+    SELECT (campos,)
+    FROM tabela2
+    WHERE campo1 = valor1
+    [AND/OR campoN = valorN]
+);
+
+Não é uma boa prática. Melhor prática utilizar o LEFT JOIN.
+
+#### INSERT - Idempotência
+INSERT INTO agencia (banco_numero, numero, nome)
+SELECT 341, 1, 'Centro da Cidade'
+WHERE NOT EXISTS (
+    SELECT banco_numero, numero, nome 
+    FROM agencia
+    WHERE banco_numero = 341 AND numero = 1 AND nome = 'Centro da Cidade'
+);
+
+Não é uma boa prática
+
+#### ON CONFLICT 
+INSERT INTO agencia (banco_numero, numero, nome) VALUES (341,1,'Centro da Cidade')
+ON CONFLICT (banco_numero, numero) DO NOTHING;
+
+É uma boa prática no postgres;
+
+#### UPDATE
+UPDATE tabela_nome SET campo1 = valor1, campoN = valorN WHERE (condições);
+
+#### DELETE
+DELETE FROM tabela_nome WHERE (condições);
+
+### TRUNCATE
+Definição: "Esvazia" a tabela
+TRUNCATE [TABLE] [ONLY] name [ * ] [, ...]
+    [RESTART IDENTITY | CONTINUE IDENTITY ] [ CASCADE | RESTRICT ]
+
+- Limpar e reinicializar os ids
+TRUNCATE TABLE ONLY cliente_transacoes RESTART IDENTITY CASCADE;
+
+- Limpar e manter continuo os ids
+TRUNCATE TABLE ONLY cliente_transacoes CONTINUE IDENTITY RESTRICT;
+
+
 
