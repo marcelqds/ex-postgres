@@ -1,4 +1,4 @@
-## Dado 
+# Dado 
 Informação sem valor algum
 
 ## Informação
@@ -286,7 +286,7 @@ UPDATE tabela_nome SET campo1 = valor1, campoN = valorN WHERE (condições);
 #### DELETE
 DELETE FROM tabela_nome WHERE (condições);
 
-### TRUNCATE
+#### TRUNCATE
 Definição: "Esvazia" a tabela
 TRUNCATE [TABLE] [ONLY] name [ * ] [, ...]
     [RESTART IDENTITY | CONTINUE IDENTITY ] [ CASCADE | RESTRICT ]
@@ -296,6 +296,14 @@ TRUNCATE TABLE ONLY cliente_transacoes RESTART IDENTITY CASCADE;
 
 - Limpar e manter continuo os ids
 TRUNCATE TABLE ONLY cliente_transacoes CONTINUE IDENTITY RESTRICT;
+
+#### Funções Agregadas
+- AVG
+- COUNT (opção: HAVING)
+- MAX
+- MIN
+- SUM
+[Funções agregadas](https://www.postgresql.org/docs/11/functions-aggregate.html)
 
 
 
