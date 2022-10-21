@@ -305,5 +305,25 @@ TRUNCATE TABLE ONLY cliente_transacoes CONTINUE IDENTITY RESTRICT;
 - SUM
 [Funções agregadas](https://www.postgresql.org/docs/11/functions-aggregate.html)
 
+#### JOINs
+- JOIN (INNER JOIN)
+- LEFT JOIN (LEFT OUTER JOIN)
+- RIGHT JOIN (RIGHT OUTER JOIN)
+- FULL JOIN (FULL OUTER JOIN)
+- CROSS JOIN
 
+#### INNER JOIN
+Traz os resultados que respeitem a condição entre as tabelas. O resultado sera á intersecção entre as tabelas.
+
+#### LEFT JOIN
+Traz todos os dados da tabela a esquerda, e dados da tabela a direita caso tenha relação, se não existir, terá null no retorno.
+
+#### RIGHT JOIN
+Traz todos os resultados da tabela a direita, e resultados da tabela a esquerda caso tenha relação, se não existir, terá null no retorno.
+
+#### FULL JOIN
+Traz todos os resultados que tem relação, depois todos os registros da tabela a esquerda que não tenha relação, com os dados quanto a direita null, após trará todos os resultados da tabela a direita que não tenha relação, com os dados da tabela a direita null.
+
+#### CROSS JOIN
+Todas os dados da tabela a esquerda será cruzado com todos os dados com a tabela a direita. Montando assim uma matrix.
 

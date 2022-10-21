@@ -49,7 +49,7 @@ SELECT MIN(valor), tipo_transacao_id AS tipo_transacao
 FROM cliente_transacoes
 GROUP BY tipo_transacao_id;
 
-SELECT column_name, data_type FROM information_schema.columns = 'cliente_transacoes';
+SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'cliente_transacoes';
 
 SELECT COUNT(id), tipo_transacao_id AS tipo_transacao
 FROM cliente_transacoes
