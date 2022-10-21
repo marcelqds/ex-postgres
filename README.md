@@ -344,4 +344,102 @@ SELECT [nome1].(campos,), [nome2].(campos,)
 FROM [nome1]
 JOIN [nome2]...
 
+### Views
+View são visões.
+"Camadas" para as tabelas.
+"Alias" para uma ou mais queries
+Aceitam comandos de SELECT, INSERT, UPDATE, e DELETE
 
+Somente as views que fazem referência a apenas uma tabela aceitam (SELECT, INSERT, UPDATE, DELETE), caso tenha JOIN, só aceitará o SELECT
+
+CREATE [OR REPLACE] [ TEMP | TEMPORARY ] [ RECURSIVE ] VIEW name [( column_name [, ...])]
+    [ WITH (view_option_name [= view_option_value] [, ...] )]
+    AS query
+    [ WITH [CASCADED | LOCAL ] CHECK OPTION ]
+
+View Idempotência = CREATE OR REPLACE
+TEMP = View só irá existir na sessão que foi criada
+RECURSIVE = Select dentro da view, que irá chamar recursivamente até chegar na regra desejada.
+
+
+- CREATE OR REPLACE
+
+CREATE OR REPLACE VIEW minha_view AS (
+    SELECT nome, email
+    FROM usuario
+);
+
+SELECT nome, email
+FROM minha_view;
+
+CREATE OR REPLACE VIEW minha_view (usuario_nome, usuario_email ) AS (
+    SELECT nome, email
+    FROM usuario
+);
+
+SELECT usuario_nome, usuario_email
+FROM minha_view
+
+- TEMPORARY
+Criada no momento de requisição do usuário, e destruida após o encerramento da sessão.
+
+CREATE OR REPLACE TEMPORARY VIEW minha_view AS (
+    SELECT nome, email
+    FROM usuario
+);
+
+SELECT nome, email
+FROM minha_view
+
+- RECURSIVE
+Obrigatório:
+    - A existência dos campos da VIEW
+    - UNION ALL
+
+*UNION - Unifica
+*UNION ALL - Não unifica
+
+CREATE OR REPLACE RECURSIVE VIEW (nome_da_view) (campos_da_view) AS (
+    SELECT base
+    UNION ALL
+    SELECT campos
+    FROM tabela_base
+    *JOIN (nome_da_view)*
+);
+
+
+- WITH OPTION
+
+CREATE OR REPLACE VIEW minha_view AS (
+    SELECT nome, email
+    FROM usuario
+);
+
+INSERT INTO minha_view (nome, email) VALUES ('Bora','bora@bora.com.br');
+-- OK
+
+CREATE OR REPLACE VIEW minha_view AS (
+    SELECT nome, email, ativo
+    FROM usuario
+    WHERE ativo IS TRUE
+) WITH LOCAL CHECK OPTION;
+
+INSERT INTO minha_view (nome, email, ativo) VALUES ('Bora', 'bora@bora.com.br',FALSE);
+-- ERRO
+
+- WITH CASCADED
+Caso inclua condições em views e nessa não foi incluido o `WITH LOCAL`, poderá checar através do `WITH CASCADED` como opção na view que estará utilizando outra view como depedência/referencia.
+
+CREATE OR REPLACE VIEW minha_view AS(
+    ...
+    WHERE ativo IS TRUE
+);
+
+
+CREATE OR REPLACE VIEW minha_veiw_com_email AS (
+    ...
+    FROM minha_view
+
+)  WITH CASCADED CHECK OPTION;
+
+ 
