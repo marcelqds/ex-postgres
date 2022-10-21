@@ -442,4 +442,44 @@ CREATE OR REPLACE VIEW minha_veiw_com_email AS (
 
 )  WITH CASCADED CHECK OPTION;
 
- 
+
+#### Transações
+Conceito fundamental de todos os sistemas de banco de dados.
+Conceito de múltiplas etapas/códigos reunidos em apenas 1 transação, onde o resultado precisa ser tudo ou nada.
+
+- Exemplo de operação que se ocorrer erro, as informações podem ser perdidas
+
+UPDATE conta SET valor = valor - 100.00 WHERE nome = 'Alice';
+UPDATE conta SET valor = valor + 100.00 WHERE nome= 'Bob';
+
+- Exemplo de transação, se ocorrer erro, nada será modificado, caso chegue no final, será executado um `COMMIT`, confirmando a transação.
+Outra opção seria o `ROLLBACK`, para desfazer.
+
+BEGIN;
+
+    UPDATE conta SET valor = valor - 100.00 
+    WHERE nome = 'Alice';
+
+    UPDATE conta SET valor = valor + 100.00 
+    WHERE nome= 'Bob';
+
+COMMIT;
+
+- SAVEPOINT
+
+BEGIN;
+    UPDATE conta SET valor = valor - 100.00
+    WHERE nome = 'Alice';
+
+SAVEPOINT my_savepoint;
+    UPDATE conta SET valor = valor + 100.00
+    WHERE nome = 'Bob';
+    -- oops ... não é para Bob, é para o Wally!!!
+ROLLBACK TO my_savepoint;
+
+    UPDATE conta SET valor = valor + 100.00
+    WHERE nome = 'Wally';
+COMMIT;
+
+
+
