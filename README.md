@@ -327,3 +327,21 @@ Traz todos os resultados que tem relação, depois todos os registros da tabela 
 #### CROSS JOIN
 Todas os dados da tabela a esquerda será cruzado com todos os dados com a tabela a direita. Montando assim uma matrix.
 
+### CTE (Common Table Expressions)
+Forma auxiliar de organizar "statements"
+Normalmente utilizado com código complexo.
+
+WITH [nome1] AS (
+    SELECT (campos,)
+    FROM tabela_A
+    [WHERE]
+), [nome2] AS (
+    SELECT [campos,]
+    FROM tabela_B
+    [WHERE]
+)
+SELECT [nome1].(campos,), [nome2].(campos,)
+FROM [nome1]
+JOIN [nome2]...
+
+
