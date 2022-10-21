@@ -482,4 +482,124 @@ ROLLBACK TO my_savepoint;
 COMMIT;
 
 
+#### Funções
+Conjunto de códigos que são executados `dentro de uma transação` com a finalidade de facilitar a programação e obter o reaproveitamento/reutilização de códigos;
+
+Existem 4 tipos de funções:
+- query language functions (funções escritas em SQL)
+- procedural language functions (funções escritas em: PL/pgSQL ou PL/py)
+- internal functions
+- C-language functions (C ou C++, podemos compilar os códigos em C)
+
+Porém o foco será `USER DEFINED FUNCTIONS`.
+Funções que podem ser criadas pelo usuário.
+
+- [Linguagens para criar funções](https://www.postgresql.org/docs/11/external-pl.html)
+    - SQL
+    - PL/PGSQL
+    - PL/PY
+    - PL/PHP
+    - PL/RUBY
+    - PL/JAVA
+    - PL/LUA
+    - ...
+
+Definição
+
+CREATE [ OR REPLACE ] FUNCTION
+    name ( [ argmode ] [ argname ] argtype [ { DEFAULT | = } default_expr ] [, ...] ])
+    [ RETURNS rettype
+     | RETURNS TABLE (column_name column_type [, ...] ) ]
+    {   LANGUAGE lang_name
+        | TRANFORM { FOR TYPE type_name }  [, ...]
+        | WINDOW
+        | IMMUTABLE | STABLE | VOLATILE | [ NOT ] LEAKPROOF
+        | CALLED ON NULL INPUT | RETURNS NULL ON NULL INPUT | STRICT
+        | [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER
+        | PARALLEL { UNSAFE | RESTRICTED | SAFE }
+        | CONST execution_cost
+        | ROWS result_rows
+        | SET configuration_parameter { TO value | = value | FROM CURRENT }
+        | AS 'definition'
+        | AS 'obj_file', 'link_symbol'
+    } ...
+
+Funcões idempotência
+- CREATE `OR REPLACE` FUNCTION [nome da função]
+    - Mesmo nome
+    - Mesmo tipo de retorno
+    - Mesmo número de parâmetros/argumentos
+
+
+#### RETURNS
+Tipo de retorno (data type)
+- INTEGER
+- CHAR / VARCHAR
+- BOOLEAN
+- ROW
+- TABLE
+- JSON
+
+#### SECURITY
+- INVOKER (padrão, permitir que a função seja executada com as permissões do usuário que está executando a função)
+- DEFINER (com as permissões do usuário que criou a função)
+
+#### Comportamento
+- IMMUTABLE
+Não pode alterar o banco de dados.
+Funções que garantem o mesmo resultado para os mesmos argumentos/parâmetros da função. Evitar a utilização de selects, pois tableas podem sofrer alterações.
+- STABLE
+Não pode alterar o banco de dados.
+Funções que garantem o mesmo resultado para os mesmos arguentos/parâmetros da função. Trabalha melhor com tipos de current_timestamp e outros tipos variáveis. Podem cotner selects.
+- VOLATILLE
+Comportamento padrão. Aceita todos os cenários.
+
+#### SEGURANÇA E BOAS PRÁTICAS
+- CALLED ON NULL INPUT
+padrão.
+Se qualquer um dos parâmetros/argumentos for NULL, a função será executada.
+- RETURNS NULL ON NULL INPUT
+Se qualquer um dos parâmetros/argumentos for NULL, a função retornará NULL.
+- SECURITY INVOKER
+Padrão
+A função é executada com as permissões de quem executa.
+- SECURITY DEFINER
+A função é executada com as permissões de quem criou a função.
+
+#### RECURSOS
+- COST
+Custo/row em unidades de CPU
+- ROWS
+Numero estimado de linhas que será analisada pelo planner;
+
+#### SQL FUNCTIONS
+Não é possível utilizar `TRANSAÇÕES`
+
+CREATE OR REPLACE FUNCTION fc_somar(INTEGER, INTEGER)
+RETURNS INTEGER
+LANGUAGE SQL
+AS $$
+    SELECT $1 + $2;
+$$;
+
+CREATE OR REPLACE FUNCTION fc_somar ( num1 INTEGER, num2 INTEGER)
+RETURNS INTEGER
+LANGUAGE SQL
+AS $$
+    SELECT num1 + num2;
+$$;
+
+CREATE OR REPLACE FUNCTION fc_usuario_add (p_nome VARCHAR, p_email VARCHAR)
+RETURNS TABLE (id INTEGER, nome VARCHAR)
+RETURNS NULL ON NULL INPUT
+LANGUAGE SQL
+AS $$
+    INSERT INTO usuarios (nome, email)
+    VALUES (p_nome, p_email);
+
+    SELECT id, nome
+    FROM usuarios
+    WHERE email = p_email
+$$;
+
 
